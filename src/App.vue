@@ -1,13 +1,15 @@
 <template>
   <div id="app">
     <main>
+      <rules-component v-show="isNoob" @toggleOff="toggleRules" />
+
       <div class="game_data">
         <div class="options">
           <img src="./assets/images/logo.svg" alt="" />
         </div>
         <div class="score">
           <h4>SCORE</h4>
-          <h2 class="counter">12</h2>
+          <h2 class="counter">{{ this.point }}</h2>
         </div>
       </div>
       <!-- ./HEADER -->
@@ -15,12 +17,18 @@
       <Choice v-if="!hasPicked" @picked="pickedHand" />
       <!-- ./Choice -->
 
-      <Matchup-component v-else :hand="this.hand" :counter="this.counter" />
+      <Matchup-component
+        v-else
+        :hand="this.hand"
+        :counter="this.counter"
+        :winner="this.winner"
+        @playAgain="playAgain"
+      />
 
       <div class="modal"></div>
     </main>
 
-    <Footer />
+    <Footer @toggle="toggleRules" />
   </div>
 </template>
 
@@ -28,6 +36,7 @@
 import Choice from "./components/choice.vue";
 import Footer from "./components/footer.vue";
 import MatchupComponent from "./components/matchupComponent.vue";
+import RulesComponent from "./components/rulesComponent.vue";
 
 export default {
   data() {
@@ -35,19 +44,88 @@ export default {
       hasPicked: false,
       hand: "",
       counter: "",
+      point: 0,
+      winner: "",
+      isNoob: false,
     };
   },
   components: {
     Choice,
     Footer,
     MatchupComponent,
+    RulesComponent,
   },
   methods: {
     pickedHand(text) {
       this.hasPicked = true;
       this.hand = text;
       this.counter = Math.floor(Math.random() * 3);
+      this.determineWinner();
     },
+
+    playAgain() {
+      this.hasPicked = false;
+    },
+
+    determineWinner() {
+      setTimeout(() => {
+        if (this.hand == "paper") {
+          console.log();
+          if (this.counter == 0) {
+            this.winner = "tie";
+          } else if (this.counter == 1) {
+            this.winner = "pc";
+            this.point -= 1;
+            this.persist();
+          } else {
+            this.winner = "player";
+            this.point += 1;
+            this.persist();
+          }
+        } else if (this.hand == "scissors") {
+          if (this.counter == 1) {
+            this.winner = "tie";
+          } else if (this.counter == 2) {
+            this.winner = "pc";
+            this.point -= 1;
+            this.persist();
+          } else {
+            this.winner = "player";
+            this.point += 1;
+            this.persist();
+          }
+        } else {
+          if (this.counter == 2) {
+            this.winner = "tie";
+          } else if (this.counter == 0) {
+            this.winner = "pc";
+            this.point -= 1;
+            this.persist();
+          } else {
+            this.winner = "player";
+            this.point += 1;
+            this.persist();
+          }
+        }
+      }, 2500);
+    },
+
+    toggleRules() {
+      if (this.isNoob == false) {
+        this.isNoob = true;
+      } else {
+        this.isNoob = false;
+      }
+    },
+
+    persist() {
+      localStorage.point = this.point;
+    },
+  },
+  mounted() {
+    if (localStorage.getItem("point")) {
+      this.point = localStorage.point;
+    }
   },
 };
 </script>
@@ -57,14 +135,14 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&display=swap");
 
 #app {
-  background: radial-gradient(hsl(214, 47%, 23%), hsl(237, 49%, 15%));
   min-height: 100vh;
+  background: radial-gradient(hsl(214, 47%, 23%), hsl(237, 49%, 15%));
 }
 
 main {
   margin: auto;
   max-width: 1366px;
-  min-width: 1366px;
+  width: 1366px;
   padding-top: 3rem;
 
   .game_data {

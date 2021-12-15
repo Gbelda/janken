@@ -1,6 +1,6 @@
 <template>
   <footer>
-    <div class="rules">
+    <div class="rules" @click="$emit('toggle', true)">
       <h3>RULES</h3>
     </div>
   </footer>
