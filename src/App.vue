@@ -124,7 +124,8 @@ export default {
   },
   mounted() {
     if (localStorage.getItem("point")) {
-      this.point = localStorage.point;
+      // this.point = localStorage.point;
+      localStorage.removeItem(this.point);
     }
   },
 };
@@ -142,7 +143,7 @@ export default {
 main {
   margin: auto;
   max-width: 1366px;
-  width: 1366px;
+  // width: 1366px;
   padding-top: 3rem;
 
   .game_data {

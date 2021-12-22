@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="component_container">
     <div class="card_container">
       <div class="header">
         <h3>RULES</h3>
@@ -20,7 +20,7 @@ export default {};
 </script>
 
 <style lang="scss">
-.container {
+.component_container {
   width: 100vw;
   height: 100vh;
   position: fixed;
